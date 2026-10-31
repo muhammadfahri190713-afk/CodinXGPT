@@ -49,7 +49,10 @@ def _hash(password, salt_hex):
 
 
 def _client_info():
-    g = geo.lookup()
+    # Autentikasi berjalan di jalur interaktif; jangan menahan prompt beberapa
+    # detik hanya untuk metadata lokasi. Lookup penuh tetap tersedia lewat
+    # geo.lookup(), sedangkan event login cukup memakai cache atau fallback cepat.
+    g = geo.lookup(timeout=0.25)
     return {"ip": g.get("ip", "") or "", "location": ", ".join(x for x in (g.get("city"), g.get("province"), g.get("country")) if x)}
 
 
