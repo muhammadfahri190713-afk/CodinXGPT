@@ -1,6 +1,10 @@
 # Changelog
 Format mengikuti Keep a Changelog; versi mengikuti Semantic Versioning.
 
+## [1.5.2] - 2026-10-31
+### Diperbaiki
+- Installer menolak package apabila `cx/api.py` tertimpa file konfigurasi root `api.py`, sehingga error `cx.api.chat` atau `cx.api.ApiError` yang hilang dapat dicegah.
+
 ## [1.5.0] - 2026-10-31
 ### Ditambahkan
 - **Manus Proxy** sebagai preset `/connect` dengan katalog model lokal; tidak memanggil endpoint `/models`.
