@@ -52,6 +52,10 @@ if [ "$SRC" != "$DEST" ]; then
   rm -rf "$STAGE"
   mkdir -p "$STAGE"
   cp -a "$SRC"/. "$STAGE"/
+  # Preserve a previously configured root-level API key during upgrades.
+  if [ -f "$DEST/api.py" ] && grep -Eq 'API_KEY[[:space:]]*=[[:space:]]*["\x27][^"\x27]+["\x27]' "$DEST/api.py"; then
+    cp -p "$DEST/api.py" "$STAGE/api.py"
+  fi
   # Verify the staged package can actually be imported before replacing the old install.
   for f in cx/__init__.py cx/api.py cx/wire.py cx/cli.py bin/codinx; do
     [ -f "$STAGE/$f" ] || { echo "ERROR: hasil salin tidak lengkap: $f"; exit 1; }

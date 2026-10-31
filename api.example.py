@@ -1,7 +1,7 @@
-"""Template koneksi CodinX.
+"""Template konfigurasi koneksi CodinX.
 
-Salin file ini menjadi api.py, lalu isi API_KEY. api.py sengaja di-ignore Git
-agar key tidak ikut ter-upload ke repository publik.
+Salin menjadi api.py, lalu isi API_KEY. api.py di-ignore Git agar
+API key tidak ikut terunggah ke repository publik.
 """
 
 API_KEY = ""
