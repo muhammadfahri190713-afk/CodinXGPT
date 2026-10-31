@@ -1,65 +1,398 @@
-# CodinX — agent coding di terminal
+<div align="center">
 
-Agent coding berbasis terminal yang **menulis, menjalankan, dan memverifikasi** kode untukmu — terinspirasi opencode, Codex CLI, dan Claude Code.
-Python murni (stdlib) + Pygments untuk warna sintaks. Berjalan di Linux, container, dan **Termux tanpa root**.
-Versi 1.3.0 · lisensi MIT.
+# CodinX
 
-## Mulai cepat
-```bash
-unzip CodinX.zip && cd CodinX
-cp api.example.py api.py                    # isi API_KEY di api.py; file ini di-ignore Git
-npm run -s codinx-agents                    # atau: python3 bin/codinx
-# pasang permanen (perintah `codinx`):  bash install.sh
-# Termux: install.sh memakai $PREFIX secara otomatis; tanpa instalasi pun bisa: python3 bin/codinx
+### Terminal coding agent yang benar-benar bekerja bersama kamu.
+
+Tulis kode. Jalankan perintah. Baca error. Perbaiki proyek.
+Semua dari terminal — dengan streaming, tools, skills, memory, dan kontrol penuh di tanganmu.
+
+<p>
+  <a href="https://github.com/muhammadfahri190713-afk/CodinXGPT"><img src="https://img.shields.io/badge/version-1.5.2-7c3aed?style=for-the-badge" alt="Version 1.5.2"></a>
+  <a href="https://github.com/muhammadfahri190713-afk/CodinXGPT/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge" alt="MIT License"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.9%2B-3776ab?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.9+"></a>
+  <a href="https://github.com/muhammadfahri190713-afk/CodinXGPT/actions"><img src="https://img.shields.io/github/actions/workflow/status/muhammadfahri190713-afk/CodinXGPT/ci.yml?style=for-the-badge&label=CI" alt="CI status"></a>
+</p>
+
+<p>
+  <a href="#mulai-dalam-60-detik">Mulai cepat</a> ·
+  <a href="#fitur-utama">Fitur</a> ·
+  <a href="#perintah-penting">Perintah</a> ·
+  <a href="docs/CONFIG.md">Konfigurasi</a> ·
+  <a href="#dokumentasi">Dokumentasi</a>
+</p>
+
+</div>
+
+---
+
+## Mengapa CodinX?
+
+CodinX adalah coding agent berbasis terminal untuk Linux, container, dan Termux. Ia tidak hanya menghasilkan jawaban: CodinX dapat membaca repository, mengubah file, menjalankan test, memeriksa hasil, lalu melanjutkan pekerjaan berdasarkan feedback nyata dari proyekmu.
+
+```text
+┌──────────────────────────────────────────────────────────────────┐
+│  CodinX  ·  terminal coding agent                               │
+│                                                                  │
+│  prompt → model → tools → filesystem / shell / web / MCP        │
+│                  ↑                         │                     │
+│                  └──── session · memory · skills · hooks ──────┘
+└──────────────────────────────────────────────────────────────────┘
 ```
-Non-interaktif: `codinx run "buat web todo" --auto` · `codinx run -c "lanjutkan"` · `codinx run "/skill debug-fix error x"` · `--format json`.
-Endpoint bawaan `https://inttelix.vercel.app/api/v1`; API key dibaca dari `api.py` lokal. `.env` tetap didukung untuk kompatibilitas lama. Semua variabel: [docs/CONFIG.md](docs/CONFIG.md).
 
-## Masa uji coba: semua model gratis
-Selama uji coba (`trial_mode`, **bawaan aktif**) seluruh **170 model** terbuka tanpa kunci paket dan **Dinar tidak dipotong**.
-Matikan dengan `CODINX_TRIAL=0` untuk kembali ke aturan paket FREE/PRO/MAX (FREE: 1300 Dinar/hari, 1 request = 65 Dinar, reset 00:00 zona waktu lokal).
+### Cocok untuk
 
-## Fitur
-- **Saran live saat mengetik**: ketik `/` → daftar perintah muncul dan menyempit tiap huruf (`/h` → `/help`), ↑↓ · Tab · Enter · Esc. Juga `@file`, `$skill`, dan argumen.
-- **Desain**: 49 tema + pemilih dengan pratinjau langsung (`/theme`), 10 preset (`/design`), banner/border/spinner/ikon/prompt yang bisa diganti. [docs/DESIGN.md](docs/DESIGN.md)
-- **Linux & Termux**: tanpa root, warna truecolor otomatis, layar sempit. [docs/TERMUX.md](docs/TERMUX.md)
-- **UI**: banner, Markdown berwarna (judul, tabel yang membungkus teks, daftar), **syntax highlighting** (Pygments), 11 tema.
-- **Izin kuning** "Apakah anda ingin izinkan ini?" → *Iya / Tidak / Selalu izinkan*; *Tidak* → agent mencoba cara lain. Perintah destruktif selalu diblokir. [docs/PERMISSIONS.md](docs/PERMISSIONS.md)
-- **Tool (17)**: read, write, edit, multiedit, list, glob, grep, bash (+background), webfetch (termasuk `localhost:3000`), websearch, todo, task (sub-agent), skill, memory, table, camera + server MCP.
-- **Skills (42)** bisa dijalankan langsung: `/skills`, `/skill <nama>`, `/<nama>`, `$nama` di pesan, atau otomatis. [docs/SKILLS.md](docs/SKILLS.md)
-- **Memori**: sesi tersimpan & dilanjutkan otomatis; memori jangka panjang ("ingat bahwa…", "nama saya…", `/remember`).
-- **Sub-agent** khusus (6 bawaan). [docs/SUBAGENTS.md](docs/SUBAGENTS.md) · **Hooks** [docs/HOOKS.md](docs/HOOKS.md) · **MCP** [docs/MCP.md](docs/MCP.md)
-- `/plan` read-only, `/undo` `/redo` file, `/diff`, `/init` (AGENTS.md), `@file`, `!shell`, `/compact`, `/export`, log debug. Daftar lengkap: [docs/COMMANDS.md](docs/COMMANDS.md)
+- memperbaiki bug dari traceback atau failing test;
+- memahami codebase lama sebelum melakukan perubahan;
+- membuat fitur dengan mode **build** atau merancangnya dulu dengan **plan**;
+- menjalankan workflow berulang melalui skills, commands, hooks, dan sub-agent;
+- bekerja di perangkat yang ringan — termasuk Termux tanpa root.
 
-## Kompatibilitas proxy (agent tidak lupa percakapan, skill & tool selalu jalan)
-Proxy "OpenAI-compatible" sering tidak persis kompatibel. Pada pesan pertama tiap model, CodinX **mendiagnosis sendiri** (`/doctor`):
-bila gateway hanya membaca pesan terakhir → mode riwayat **flat**; bila tanpa function-calling → tool lewat teks (`<tool_call>`); bila tak bisa tool sama sekali →
-chat + `/skill` + `!perintah`. Detail dan cara memaksa mode: [docs/PROXY_COMPAT.md](docs/PROXY_COMPAT.md). Masalah umum: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
+## Mulai dalam 60 detik
 
-## Keamanan & GitHub
-`.env` (rahasia) sudah di `.gitignore`; yang di-commit hanya `.env.example`. Sebelum push: `python3 scripts/secret_scan.py .` dan `bash scripts/install-git-hooks.sh`.
-API key tidak pernah ditulis ke log/config. Panduan lengkap & rotasi key: [docs/GITHUB.md](docs/GITHUB.md), [SECURITY.md](SECURITY.md).
-Pembatasan paket/Dinar hanya di sisi klien — penegakan sungguhan harus ada di proxy.
+### 1. Clone dan siapkan konfigurasi
 
-## Pengembangan
-`make test` (232 test, tanpa jaringan, ±20 detik) · `make scan` · `make docs` · `make zip`. Arsitektur: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Kontribusi: [CONTRIBUTING.md](CONTRIBUTING.md).
+```bash
+git clone https://github.com/muhammadfahri190713-afk/CodinXGPT.git
+cd CodinXGPT
+cp api.example.py api.py
+```
+
+Edit `api.py`, lalu isi API key milikmu. File ini bersifat lokal dan sudah dilindungi `.gitignore`.
+
+> Alternatif yang lebih aman untuk deployment: gunakan `CODINX_API_KEY` dan `CODINX_BASE_URL` melalui environment atau `.env` lokal.
+
+### 2. Jalankan langsung
+
+```bash
+python3 bin/codinx
+```
+
+### 3. Atau pasang command global
+
+```bash
+bash install.sh
+codinx
+```
+
+Installer mendeteksi Linux, container, dan Termux secara otomatis. Untuk Termux, `$PREFIX` digunakan sebagai lokasi instalasi.
+
+### 4. Coba perintah pertama
+
+```text
+> baca repository ini, jelaskan arsitekturnya, lalu jalankan test yang relevan
+```
+
+Mode non-interaktif juga tersedia:
+
+```bash
+codinx run "buat ringkasan struktur proyek ini" --auto
+codinx run -c "lanjutkan pekerjaan sebelumnya"
+codinx run "/skill debug-fix error ini" --auto
+codinx run "cek status proyek" --format json
+```
+
+## Fitur utama
+
+<table>
+<tr>
+<td width="50%">
+
+### Agent coding
+
+- membaca dan menulis file;
+- edit terarah dan multi-edit;
+- menjalankan shell dengan kontrol izin;
+- menjalankan test dan menganalisis error;
+- mode build dan plan;
+- compact otomatis saat konteks mendekati batas.
+
+</td>
+<td width="50%">
+
+### Tool calling yang tangguh
+
+- native function calling;
+- text-based tool fallback;
+- deteksi kompatibilitas proxy per model;
+- fallback saat streaming ditolak;
+- dukungan format OpenAI, Anthropic, dan Gemini;
+- kompatibilitas gateway yang hanya mengirim pesan terakhir.
+
+</td>
+</tr>
+<tr>
+<td>
+
+### Terminal UX
+
+- popup suggestion saat mengetik `/`;
+- autocomplete untuk commands, skills, argumen, dan `@file`;
+- Tab, ↑↓, Enter, Esc;
+- syntax highlighting;
+- tema, desain, banner, spinner, border, prompt;
+- tampilan adaptif untuk terminal sempit.
+
+</td>
+<td>
+
+### Workflow yang bisa dikembangkan
+
+- 40+ skills bawaan;
+- sub-agent;
+- commands dan project instructions;
+- hooks;
+- MCP server;
+- memory jangka panjang;
+- session tersimpan, resume, export, undo, dan redo.
+
+</td>
+</tr>
+<tr>
+<td>
+
+### Multi-endpoint
+
+- endpoint OpenAI-compatible;
+- preset Manus;
+- koneksi custom;
+- katalog model live;
+- model trial dan paket Free/Pro/Max;
+- fallback assistant opsional.
+
+</td>
+<td>
+
+### Aman secara default
+
+- API key tidak disimpan ke `config.json`;
+- `api.py`, `.env`, dan key terenkripsi di-ignore;
+- secret scanner;
+- permission per tool;
+- hard-deny untuk perintah destruktif;
+- installer memverifikasi package API sebelum mengganti instalasi.
+
+</td>
+</tr>
+</table>
+
+## Alur kerja CodinX
+
+```mermaid
+flowchart LR
+    U[Prompt di terminal] --> R[REPL & autocomplete]
+    R --> A[Agent]
+    A --> P{Mode kompatibilitas}
+    P -->|Native| N[Function calling]
+    P -->|Text| T[Tool call berbasis teks]
+    P -->|Chat only| C[Chat + skills + shell]
+    N --> X[Tool executor]
+    T --> X
+    C --> X
+    X --> F[File system / shell / web / MCP]
+    F --> V[Test & verifikasi]
+    V --> A
+    A --> S[Session & memory]
+```
+
+## Perintah penting
+
+| Perintah | Kegunaan |
+|---|---|
+| `codinx` | Membuka sesi interaktif |
+| `codinx run "..."` | Menjalankan satu prompt tanpa REPL |
+| `codinx run --format json "..."` | Output terstruktur untuk automation |
+| `/help` | Daftar perintah dan tool |
+| `/models` | Melihat model yang tersedia |
+| `/connect` | Mengatur endpoint dan API key |
+| `/doctor` | Mendiagnosis kompatibilitas proxy/model |
+| `/theme` | Memilih tema dengan preview |
+| `/design` | Mengatur atau menyimpan preset desain |
+| `/skills` | Menjelajah skills yang tersedia |
+| `/skill <nama>` | Menjalankan skill tertentu |
+| `/plan` | Masuk ke mode read-only planning |
+| `/new` | Memulai session baru |
+| `/sessions` | Melihat session tersimpan |
+| `/undo` / `/redo` | Membatalkan atau mengulang perubahan |
+| `/diff` | Melihat perubahan proyek |
+| `/export` | Mengekspor percakapan |
+| `@file` | Melampirkan file ke konteks prompt |
+| `!perintah` | Menjalankan shell dari dalam sesi |
+| `/permissions` | Mengatur kebijakan izin tool |
+| `/admin_panel` | Melihat panel admin lokal |
+
+Daftar lengkap tersedia di [docs/COMMANDS.md](docs/COMMANDS.md).
+
+## Konfigurasi
+
+CodinX menggunakan prioritas berikut untuk koneksi:
+
+```text
+environment  >  api.py  >  .env legacy  >  ~/.codinx/config.json
+```
+
+### Konfigurasi lokal `api.py`
+
+```python
+API_KEY = "isi_api_key_kamu"
+BASE_URL = "https://inttelix.vercel.app/api/v1"
+```
+
+### Environment
+
+```bash
+export CODINX_API_KEY="..."
+export CODINX_BASE_URL="https://inttelix.vercel.app/api/v1"
+export CODINX_MODEL="deepseek-v4-flash"
+export CODINX_TRIAL=1
+```
+
+Variabel yang berguna:
+
+| Variabel | Fungsi |
+|---|---|
+| `CODINX_API_KEY` | API key tanpa menulisnya ke config |
+| `CODINX_BASE_URL` | Endpoint API |
+| `CODINX_MODEL` | Model aktif |
+| `CODINX_TRIAL` | `1` membuka trial; `0` memakai aturan paket |
+| `CODINX_TOOL_MODE` | `auto`, `native`, `text`, atau `none` |
+| `CODINX_HISTORY_MODE` | `auto`, `native`, atau `flat` |
+| `CODINX_AUTO_PROBE` | Diagnosa proxy otomatis |
+| `CODINX_DEBUG` | Mengaktifkan debug log yang sudah disanitasi |
+| `CODINX_HOME` | Lokasi data CodinX |
+| `CODINX_SIMPLE_INPUT` | Memakai `input()` tanpa popup |
+
+Lihat seluruh opsi di [docs/CONFIG.md](docs/CONFIG.md).
+
+## Trial, paket, dan model
+
+Mode trial aktif secara default untuk development: seluruh katalog model dapat dicoba tanpa pemotongan Dinar. Untuk memakai aturan paket Free/Pro/Max, jalankan:
+
+```bash
+export CODINX_TRIAL=0
+```
+
+Pembatasan paket di sisi client bukan pengganti enforcement di proxy. Untuk penggunaan produksi, enforcement tetap harus dilakukan di sisi server.
+
+## Kompatibilitas proxy
+
+Tidak semua gateway OpenAI-compatible berperilaku sama. CodinX dapat menyesuaikan diri saat model atau proxy:
+
+- menolak streaming;
+- tidak mendukung function calling;
+- hanya membaca pesan terakhir;
+- membutuhkan mode history `flat`;
+- menggunakan field conversation ID yang berbeda;
+- mengembalikan format SSE OpenAI, Anthropic, atau Gemini.
+
+Mulai diagnosis dengan:
+
+```text
+/doctor
+```
+
+Panduan detail: [docs/PROXY_COMPAT.md](docs/PROXY_COMPAT.md).
+
+## Keamanan
+
+Jangan pernah commit API key atau file konfigurasi lokal.
+
+```bash
+# Pasang hook keamanan
+bash scripts/install-git-hooks.sh
+
+# Scan repository sebelum push
+python3 scripts/secret_scan.py .
+```
+
+Checklist sebelum publish:
+
+- `api.py` tetap lokal dan tidak staged;
+- `.env` tidak ikut commit;
+- key terenkripsi tidak ikut commit;
+- secret scanner lulus;
+- log debug tidak berisi API key;
+- endpoint produksi memakai TLS yang valid.
+
+Baca [SECURITY.md](SECURITY.md) dan [docs/GITHUB.md](docs/GITHUB.md) sebelum membagikan deployment.
+
+## Development
+
+```bash
+# Jalankan seluruh test suite
+make test
+
+# Scan secret
+make scan
+
+# Regenerasi dokumentasi
+make docs
+
+# Buat package ZIP
+make zip
+```
+
+CodinX saat ini memiliki **349 test** untuk config, auth, API streaming, proxy compatibility, tools, skills, PTY UI, Termux, security, dan workflow.
+
+### Struktur proyek
+
+```text
+CodinXGPT/
+├── bin/codinx          # launcher
+├── cx/                 # source utama agent
+│   ├── agent.py        # loop agent dan tool calls
+│   ├── api.py          # client API OpenAI-compatible
+│   ├── app.py          # REPL dan command router
+│   ├── config.py       # konfigurasi dan secret sources
+│   ├── lineedit.py     # input editor dan autocomplete
+│   └── ...
+├── commands/           # command markdown
+├── skills/             # skills bawaan
+├── agents/             # sub-agent instructions
+├── docs/               # dokumentasi teknis
+├── examples/           # contoh konfigurasi
+├── scripts/            # utility, scanner, dan build scripts
+└── tests/              # regression dan integration tests
+```
+
+Arsitektur lebih detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Dokumentasi
-| Topik | File |
+
+| Topik | Dokumentasi |
 |---|---|
 | Arsitektur | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | Perintah | [docs/COMMANDS.md](docs/COMMANDS.md) |
-| Konfigurasi & env | [docs/CONFIG.md](docs/CONFIG.md) |
+| Konfigurasi | [docs/CONFIG.md](docs/CONFIG.md) |
 | Kompatibilitas proxy | [docs/PROXY_COMPAT.md](docs/PROXY_COMPAT.md) |
-| Izin | [docs/PERMISSIONS.md](docs/PERMISSIONS.md) |
+| Permission system | [docs/PERMISSIONS.md](docs/PERMISSIONS.md) |
 | Desain terminal | [docs/DESIGN.md](docs/DESIGN.md) |
-| Termux & Linux | [docs/TERMUX.md](docs/TERMUX.md) |
+| Linux dan Termux | [docs/TERMUX.md](docs/TERMUX.md) |
 | Skills | [docs/SKILLS.md](docs/SKILLS.md) |
 | Sub-agent | [docs/SUBAGENTS.md](docs/SUBAGENTS.md) |
 | Hooks | [docs/HOOKS.md](docs/HOOKS.md) |
 | MCP | [docs/MCP.md](docs/MCP.md) |
-| Pemecahan masalah | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) |
+| Troubleshooting | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) |
 | Publish ke GitHub | [docs/GITHUB.md](docs/GITHUB.md) |
 | Contoh konfigurasi | [examples/README.md](examples/README.md) |
+| Changelog | [CHANGELOG.md](CHANGELOG.md) |
 
-Pygments disertakan di `cx/vendor` (BSD-2) — lihat [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Lisensi: [LICENSE](LICENSE).
+## Kontribusi
+
+Pull request dan issue sangat diterima. Sebelum membuka PR:
+
+```bash
+python3 scripts/secret_scan.py .
+make test
+git diff --check
+```
+
+Baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk konvensi kontribusi dan [LICENSE](LICENSE) untuk lisensi.
+
+<div align="center">
+
+### Bangun lebih cepat. Debug lebih dalam. Tetap di terminal.
+
+<a href="https://github.com/muhammadfahri190713-afk/CodinXGPT">Star repository ini di GitHub</a> jika CodinX membantu workflow-mu.
+
+</div>
