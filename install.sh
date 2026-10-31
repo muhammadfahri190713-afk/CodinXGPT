@@ -60,13 +60,13 @@ if [ "$SRC" != "$DEST" ]; then
   for f in cx/__init__.py cx/api.py cx/wire.py cx/cli.py bin/codinx; do
     [ -f "$STAGE/$f" ] || { echo "ERROR: hasil salin tidak lengkap: $f"; exit 1; }
   done
-  PYTHONPATH="$STAGE" python3 -c 'import cx.api, cx.cli; print("Pemeriksaan package: OK")'
+  PYTHONPATH="$STAGE" python3 -c 'import cx.api, cx.cli; assert callable(getattr(cx.api, "list_model_specs", None)), "cx.api.list_model_specs tidak ditemukan"; assert isinstance(getattr(cx.api, "ApiError", None), type), "cx.api.ApiError tidak ditemukan"; print("Pemeriksaan package + API: OK")'
   if [ -e "$DEST" ]; then
     mv "$DEST" "$BACKUP"
   fi
   mv "$STAGE" "$DEST"
 else
-  PYTHONPATH="$DEST" python3 -c 'import cx.api, cx.cli; print("Pemeriksaan package: OK")'
+  PYTHONPATH="$DEST" python3 -c 'import cx.api, cx.cli; assert callable(getattr(cx.api, "list_model_specs", None)), "cx.api.list_model_specs tidak ditemukan"; assert isinstance(getattr(cx.api, "ApiError", None), type), "cx.api.ApiError tidak ditemukan"; print("Pemeriksaan package + API: OK")'
 fi
 
 chmod +x "$DEST/bin/codinx"
@@ -76,7 +76,7 @@ SH="$(command -v sh)"
 printf '#!%s\nexec python3 "%s/bin/codinx" "$@"\n' "$SH" "$DEST" > "$BIN_DIR/codinx"
 chmod +x "$BIN_DIR/codinx"
 
-echo "✓ CodinX terpasang dan modul API sudah diverifikasi: $DEST"
+echo "✓ CodinX terpasang; list_model_specs dan ApiError sudah diverifikasi: $DEST"
 echo "Jalankan: codinx"
 case ":${PATH}:" in *":$BIN_DIR:"*) ;; *) echo "Tambahkan ke PATH: export PATH=\"$BIN_DIR:\$PATH\"" ;; esac
 

@@ -71,3 +71,7 @@ Format mengikuti Keep a Changelog; versi mengikuti Semantic Versioning.
 
 ## [1.0.0] - 2026-09-30
 - Rilis awal: agent terminal root-only, izin Iya/Tidak/Selalu, tier FREE/PRO/MAX + Dinar, sesi, memori, skills, tema.
+
+## 1.5.2
+- Installer memvalidasi `cx.api.list_model_specs` dan `cx.api.ApiError` sebelum mengganti instalasi aktif.
+- Memperjelas pemeriksaan modul API agar instalasi lama/tidak lengkap gagal sebelum dipasang.
